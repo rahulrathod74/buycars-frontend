@@ -6,6 +6,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showToast, setShowToast] = useState(false); // State for the toast notification
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -14,7 +15,11 @@ const Login = () => {
       const response = await axios.post("https://buycars-6lbf.onrender.com/api/login", { email, password });
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
-        navigate("/inventory");
+        setShowToast(true); // Show the toast notification on successful login
+        setTimeout(() => {
+          setShowToast(false); // Hide the toast after 2 seconds
+          navigate("/inventory"); // Redirect to inventory page
+        }, 2000);
       }
     } catch (err) {
       if (err.response && err.response.data) {
@@ -68,6 +73,14 @@ const Login = () => {
           </Link>
         </p>
       </div>
+
+      {/* Success Toast Notification */}
+      {showToast && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+          <p className="font-bold">Login Successful!</p>
+          <p>Redirecting to your inventory...</p>
+        </div>
+      )}
     </div>
   );
 };
