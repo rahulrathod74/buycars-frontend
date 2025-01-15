@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -55,7 +55,7 @@ const Login = () => {
           Login
         </button>
         <p className="mt-4 text-center">
-          Don't have an account? <a href="/signup" className="text-blue-500">Sign Up</a>
+          Don't have an account? <Link to="/signup" className="text-blue-500">Sign Up</Link>
         </p>
       </form>
     </div>
