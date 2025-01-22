@@ -24,21 +24,23 @@ const Inventory = () => {
   const [carToDelete, setCarToDelete] = useState(null);
   const navigate = useNavigate();
 
+  const fetchCars = async (filters) => {
+    try {
+      const response = await axios.get(
+        "https://buycars-6lbf.onrender.com/api/inventory",
+        { params: filters } // Pass filters as query parameters
+      );
+      setCars(response.data);
+    } catch (error) {
+      console.error("Failed to fetch cars:", error);
+    }
+  };
+  
+
   // Fetch cars with filters applied
   useEffect(() => {
-    const fetchCars = async () => {
-      try {
-        const response = await axios.get(
-          "https://buycars-6lbf.onrender.com/api/inventory",
-          { params: filters } // Pass filters as query parameters
-        );
-        setCars(response.data);
-      } catch (error) {
-        console.error("Failed to fetch cars:", error);
-      }
-    };
-    fetchCars();
-  }, [filters]);
+    fetchCars(filters);
+  }, [filters, setCars, successMessage]);
 
   // Handle filter select changes
   const handleFilterChange = (e) => {
@@ -84,13 +86,17 @@ const Inventory = () => {
     if (!carToDelete) return;
 
     try {
-      await axios.delete(`https://buycars-6lbf.onrender.com/api/inventory/${carToDelete._id}`);
-      setCars((prevCars) => prevCars.filter((car) => car._id !== carToDelete._id)); // Remove the deleted car from UI
+      let url = `https://buycars-6lbf.onrender.com/api/inventory/${carToDelete}`
+      console.log(url)
+      await axios.delete(url);
+      setCars((prevCars) => prevCars.filter((car) => car._id !== carToDelete)); // Remove the deleted car from UI
       setShowDeleteModal(false); // Close the delete confirmation modal
     } catch (error) {
       console.error("Failed to delete product:", error);
       setShowDeleteModal(false); // Close the modal in case of error
     }
+    
+    
   };
 
   // Handle form submission (add or edit)
@@ -261,7 +267,7 @@ const Inventory = () => {
                 Edit
               </button>
               <button
-                onClick={() => openDeleteModal(car)}
+                onClick={() => openDeleteModal(car._id)}
                 className="py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700"
               >
                 Delete
